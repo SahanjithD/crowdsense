@@ -5,8 +5,8 @@ import Link from "next/link";
 
 export default function CallToAction() {
   return (
-    <section className="py-16 bg-gradient-to-r from-blue-700 to-blue-800 text-white">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+    <section className="relative py-16 bg-gradient-to-r from-blue-700 to-blue-800 text-white overflow-hidden">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="max-w-4xl mx-auto text-center">
           <Badge variant="secondary" className="mb-6 bg-blue-600 text-white border-blue-500">
             🌟 Join the Movement

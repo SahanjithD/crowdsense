@@ -13,7 +13,7 @@ export default function Hero() {
       <Header />
       
       {/* Main Hero Content */}
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-16">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-16 relative z-10">
         <div className="max-w-4xl mx-auto text-center">
           {/* Badge */}
           <Badge variant="secondary" className="mb-6 text-sm font-medium px-4 py-2">
@@ -84,6 +84,15 @@ export default function Hero() {
           </div>
         </div>
       </div>
+
+      {/* Decorative Line */}
+      {/* <div className="absolute bottom-20 left-0 w-full overflow-hidden z-0">
+        <img 
+          src="/DecorativeLine.svg" 
+          alt="Decorative line" 
+          className="w-full h-auto object-cover"
+        />
+      </div> */}
 
       {/* Background Pattern */}
       <div className="absolute inset-0 -z-10 overflow-hidden">

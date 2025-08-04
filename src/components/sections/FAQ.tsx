@@ -1,41 +1,60 @@
 "use client";
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ChevronDown, ChevronUp } from "lucide-react";
 import { useState } from "react";
+import { ChevronDown, ChevronUp } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
+
+interface FAQItem {
+  question: string;
+  answer: string;
+}
+
+const faqData: FAQItem[] = [
+  {
+    question: "How does CrowdSense help improve public spaces?",
+    answer: "CrowdSense collects real-time feedback from community members about public space conditions. This data helps local authorities and organizations identify issues quickly and prioritize improvements where they're needed most."
+  },
+  {
+    question: "Is my location data private and secure?",
+    answer: "Yes, your privacy is our top priority. Location data is anonymized and encrypted. We only use location information to categorize feedback geographically and never store personal location history or share individual user data."
+  },
+  {
+    question: "What types of issues can I report?",
+    answer: "You can report various conditions including cleanliness issues (litter, graffiti), safety concerns (poor lighting, broken infrastructure), crowding levels, accessibility problems, and maintenance needs. Our system categorizes each report automatically."
+  },
+  {
+    question: "How quickly do authorities respond to reports?",
+    answer: "Response times vary by location and issue severity. Urgent safety issues are typically addressed within 24-48 hours, while general maintenance requests may take 1-2 weeks. You'll receive updates on the status of your reports."
+  },
+  {
+    question: "Can I see what others have reported in my area?",
+    answer: "Yes! Our interactive map shows anonymized reports from your neighborhood. You can view trends, see what issues are being addressed, and discover highly-rated spaces nearby."
+  },
+  {
+    question: "Do I need to create an account to use CrowdSense?",
+    answer: "You can submit anonymous reports without an account. However, creating a free account allows you to track your submissions, receive updates on issues you've reported, and earn community impact points."
+  },
+  {
+    question: "How does the real-time crowding feature work?",
+    answer: "Our crowding data comes from aggregated, anonymous user check-ins and reports. This helps others plan visits to popular spaces and helps authorities manage capacity during peak times."
+  },
+  {
+    question: "Can businesses and organizations use CrowdSense?",
+    answer: "Absolutely! We offer specialized dashboards for businesses, municipalities, and organizations to monitor their spaces, respond to feedback, and showcase improvements. Contact us for enterprise solutions."
+  }
+];
 
 export default function FAQ() {
-  const [openIndex, setOpenIndex] = useState<number | null>(null);
+  const [openItems, setOpenItems] = useState<Set<number>>(new Set());
 
-  const faqs = [
-    {
-      question: "How do I report an issue with a public space?",
-      answer: "Simply navigate to the 'Report Issue' page, allow location access or manually select a location on the map, choose the type of issue (cleanliness, crowding, safety), and submit your feedback. No account required for basic reporting."
-    },
-    {
-      question: "Is my personal information safe when I report issues?",
-      answer: "Yes, absolutely. CrowdSense prioritizes user privacy. You can report issues anonymously, and we only collect location data necessary for the feedback system. Personal information is never shared with third parties."
-    },
-    {
-      question: "How does the color-coded map system work?",
-      answer: "Our interactive map uses a simple color system: Green pins indicate good conditions, Yellow pins show mixed feedback, and Red pins highlight areas with reported issues. This helps you quickly identify the best public spaces in your area."
-    },
-    {
-      question: "Can I track if my reported issues are being addressed?",
-      answer: "Yes! Create an account to track your contributions and see updates on reported issues. You'll also earn contribution points and can view your impact on community improvements."
-    },
-    {
-      question: "What types of public spaces can I report on?",
-      answer: "You can report on various public spaces including public toilets, parks, bus stops, train stations, libraries, community centers, and other municipal facilities. Our system covers all spaces that serve the community."
-    },
-    {
-      question: "How often is the map data updated?",
-      answer: "Our map updates in real-time as community members submit feedback. You'll see the most current information about public spaces, ensuring you always have access to fresh, relevant data from fellow community members."
+  const toggleItem = (index: number) => {
+    const newOpenItems = new Set(openItems);
+    if (newOpenItems.has(index)) {
+      newOpenItems.delete(index);
+    } else {
+      newOpenItems.add(index);
     }
-  ];
-
-  const toggleFAQ = (index: number) => {
-    setOpenIndex(openIndex === index ? null : index);
+    setOpenItems(newOpenItems);
   };
 
   return (
@@ -46,48 +65,58 @@ export default function FAQ() {
             <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
               Frequently Asked Questions
             </h2>
-            <p className="text-xl text-gray-600">
-              Everything you need to know about CrowdSense and how it works.
+            <p className="text-lg text-gray-600">
+              Get answers to common questions about CrowdSense and how it works.
             </p>
           </div>
 
           <div className="space-y-4">
-            {faqs.map((faq, index) => (
-              <Card key={index} className="border-gray-200 overflow-hidden">
-                <CardHeader 
-                  className="cursor-pointer hover:bg-gray-50 transition-colors"
-                  onClick={() => toggleFAQ(index)}
-                >
-                  <CardTitle className="flex justify-between items-center text-lg font-semibold text-gray-900">
-                    <span className="text-left pr-4">{faq.question}</span>
-                    {openIndex === index ? (
+            {faqData.map((faq, index) => (
+              <Card key={index} className="transition-all duration-200 hover:shadow-md">
+                <CardContent className="p-0">
+                  <button
+                    onClick={() => toggleItem(index)}
+                    className="w-full px-6 py-4 text-left flex justify-between items-center hover:bg-gray-50 transition-colors duration-200"
+                  >
+                    <span className="font-semibold text-gray-900 pr-4">
+                      {faq.question}
+                    </span>
+                    {openItems.has(index) ? (
                       <ChevronUp className="h-5 w-5 text-gray-500 flex-shrink-0" />
                     ) : (
                       <ChevronDown className="h-5 w-5 text-gray-500 flex-shrink-0" />
                     )}
-                  </CardTitle>
-                </CardHeader>
-                {openIndex === index && (
-                  <CardContent className="border-t border-gray-100 bg-white">
-                    <p className="text-gray-600 leading-relaxed pt-4">
-                      {faq.answer}
-                    </p>
-                  </CardContent>
-                )}
+                  </button>
+                  {openItems.has(index) && (
+                    <div className="px-6 pb-4">
+                      <p className="text-gray-600 leading-relaxed">
+                        {faq.answer}
+                      </p>
+                    </div>
+                  )}
+                </CardContent>
               </Card>
             ))}
           </div>
 
-          <div className="text-center mt-12">
+          <div className="mt-12 text-center">
             <p className="text-gray-600 mb-4">
-              Still have questions? We&apos;re here to help!
+              Still have questions? We're here to help!
             </p>
-            <a 
-              href="mailto:support@crowdsense.com" 
-              className="text-blue-600 hover:text-blue-700 font-medium hover:underline"
-            >
-              Contact Support →
-            </a>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <a
+                href="mailto:support@crowdsense.com"
+                className="inline-flex items-center px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200"
+              >
+                Contact Support
+              </a>
+              <a
+                href="/help"
+                className="inline-flex items-center px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors duration-200"
+              >
+                Help Center
+              </a>
+            </div>
           </div>
         </div>
       </div>

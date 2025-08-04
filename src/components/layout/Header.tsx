@@ -17,7 +17,10 @@ export default function Header() {
             <div className="bg-blue-600 p-2 rounded-lg">
               <MapPin className="h-6 w-6 text-white" />
             </div>
-            <span className="font-bold text-xl text-gray-900">CrowdSense</span>
+            <span className="font-bold text-xl">
+              <span className="text-gray-900">Crowd</span>
+              <span className="text-blue-600">Sense</span>
+            </span>
           </Link>
 
           {/* Desktop Navigation */}
