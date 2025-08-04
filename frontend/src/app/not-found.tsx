@@ -22,10 +22,10 @@ export default function NotFound() {
         {/* Simple Message */}
         <div className="text-6xl mb-6">🗺️</div>
         <h1 className="text-3xl font-bold text-gray-900 mb-4">
-          Oops! You're Lost
+          Oops! You&apos;re Lost
         </h1>
         <p className="text-gray-600 mb-8">
-          This page doesn't exist. Let's get you back on track.
+          This page doesn&apos;t exist. Let&apos;s get you back on track.
         </p>
 
         {/* Simple Action */}
