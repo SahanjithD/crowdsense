@@ -48,7 +48,7 @@ export default function Header() {
           {/* Desktop CTA Buttons */}
           <div className="hidden md:flex items-center space-x-3">
             <Button variant="ghost" asChild>
-              <Link href="/login">Sign In</Link>
+              <Link href="/signin">Sign In</Link>
             </Button>
             <Button asChild>
               <Link href="/signup">Get Started</Link>
@@ -96,7 +96,7 @@ export default function Header() {
               </Link>
               <div className="flex flex-col space-y-3 pt-4 border-t border-gray-200">
                 <Button variant="ghost" asChild>
-                  <Link href="/login" onClick={() => setIsMenuOpen(false)}>
+                  <Link href="/signin" onClick={() => setIsMenuOpen(false)}>
                     Sign In
                   </Link>
                 </Button>
