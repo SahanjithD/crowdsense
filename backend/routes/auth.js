@@ -36,13 +36,14 @@ router.post('/signin', async (req, res) => {
     }
 
     // Update last login
-    await User.updateLastLogin(user.id);
+    await User.updateLastLogin(user.user_id);
 
     // Generate JWT token
     const token = jwt.sign(
       { 
-        userId: user.id, 
-        email: user.email 
+        userId: user.user_id, 
+        email: user.email,
+        role: user.role 
       },
       process.env.JWT_SECRET,
       { expiresIn: '24h' }
@@ -54,10 +55,12 @@ router.post('/signin', async (req, res) => {
       message: 'Sign in successful',
       token,
       user: {
-        id: user.id,
+        id: user.user_id,
         email: user.email,
         firstName: user.first_name,
-        lastName: user.last_name
+        lastName: user.last_name,
+        role: user.role,
+        isEmailVerified: user.is_email_verified
       }
     });
 
@@ -120,8 +123,9 @@ router.post('/signup', async (req, res) => {
     // Generate JWT token
     const token = jwt.sign(
       { 
-        userId: newUser.id, 
-        email: newUser.email 
+        userId: newUser.user_id, 
+        email: newUser.email,
+        role: newUser.role 
       },
       process.env.JWT_SECRET,
       { expiresIn: '24h' }
@@ -133,10 +137,12 @@ router.post('/signup', async (req, res) => {
       message: 'Account created successfully',
       token,
       user: {
-        id: newUser.id,
+        id: newUser.user_id,
         email: newUser.email,
         firstName: newUser.first_name,
-        lastName: newUser.last_name
+        lastName: newUser.last_name,
+        role: newUser.role,
+        isEmailVerified: newUser.is_email_verified
       }
     });
 
@@ -174,10 +180,12 @@ router.get('/verify', async (req, res) => {
     res.json({
       success: true,
       user: {
-        id: user.id,
+        id: user.user_id,
         email: user.email,
         firstName: user.first_name,
-        lastName: user.last_name
+        lastName: user.last_name,
+        role: user.role,
+        isEmailVerified: user.is_email_verified
       }
     });
 
