@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { MapPin, Eye, EyeOff, Mail, User, Lock, ArrowLeft } from "lucide-react";
+import { getApiUrl, API_CONFIG } from "@/lib/config";
 
 // Google Icon Component
 const GoogleIcon = () => (
@@ -121,20 +122,47 @@ export default function SignUp() {
     }
 
     setIsLoading(true);
+    setErrors({}); // Clear previous errors
     
     try {
-      // TODO: Implement actual signup API call
-      console.log("Signup data:", formData);
-      
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
-      // Success - you might want to redirect or show success message
-      alert("Account created successfully!");
+      const response = await fetch(getApiUrl(API_CONFIG.ENDPOINTS.AUTH.SIGNUP), {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          firstName: formData.firstName,
+          lastName: formData.lastName,
+          email: formData.email,
+          password: formData.password
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || 'Failed to create account');
+      }
+
+      if (data.success) {
+        // Store the JWT token in localStorage
+        if (data.token) {
+          localStorage.setItem('authToken', data.token);
+        }
+        
+        alert("Account created successfully! Welcome to CrowdSense!");
+        
+        // Optionally redirect to dashboard or signin page
+        // window.location.href = '/dashboard';
+      } else {
+        throw new Error(data.message || 'Signup failed');
+      }
       
     } catch (error) {
       console.error("Signup error:", error);
-      setErrors({ submit: "Failed to create account. Please try again." });
+      setErrors({ 
+        submit: error instanceof Error ? error.message : "Failed to create account. Please try again." 
+      });
     } finally {
       setIsLoading(false);
     }
