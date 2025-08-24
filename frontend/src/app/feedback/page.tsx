@@ -8,14 +8,6 @@ import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
 import { Textarea } from '@/components/ui/textarea';
 
-const SPACE_TYPES = [
-  'Public Toilet',
-  'Park',
-  'Bus Station',
-  'Train Station',
-  'Public Building',
-  'Other'
-];
 
 const QUICK_ISSUES = [
   { id: 'cleanliness', label: 'Cleanliness Issue' },
@@ -28,12 +20,11 @@ const QUICK_ISSUES = [
 export default function FeedbackPage() {
   const [location, setLocation] = useState<{
     coordinates?: { lat: number; lng: number };
-    district?: string;
     city?: string;
     name?: string;
     landmark?: string;
+    spaceType?: 'toilet' | 'park' | 'station' | 'bus_stop' | 'mall' | 'other';
   }>({});
-  const [spaceType, setSpaceType] = useState('');
   const [rating, setRating] = useState(0);
   const [selectedIssues, setSelectedIssues] = useState<string[]>([]);
   const [comments, setComments] = useState('');
@@ -49,7 +40,7 @@ export default function FeedbackPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!location || !spaceType) {
+    if (!location || !location.spaceType) {
       alert('Please select a location and space type');
       return;
     }
@@ -65,7 +56,6 @@ export default function FeedbackPage() {
         },
         body: JSON.stringify({
           location,
-          spaceType,
           rating,
           issues: selectedIssues,
           comments
@@ -79,7 +69,6 @@ export default function FeedbackPage() {
       alert('Feedback submitted successfully!');
       // Reset form
       setLocation({});
-      setSpaceType('');
       setRating(0);
       setSelectedIssues([]);
       setComments('');
@@ -104,40 +93,19 @@ export default function FeedbackPage() {
         </div>
 
         <Card className="p-6">
-          <h2 className="text-xl font-semibold mb-4 text-gray-700">Space Details</h2>
-          <div className="space-y-4">
-            <div>
-              <label htmlFor="spaceType" className="block text-sm font-medium text-gray-700 mb-2">
-                Type of Space
-              </label>
-              <select
-                id="spaceType"
-                value={spaceType}
-                onChange={(e) => setSpaceType(e.target.value)}
-                className="w-full p-2 border border-gray-300 rounded-md"
-                required
-              >
-                <option value="">Select a type...</option>
-                {SPACE_TYPES.map(type => (
-                  <option key={type} value={type}>{type}</option>
-                ))}
-              </select>
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Rate this space
-              </label>
-              <div className="flex items-center">
-                <Rating
-                  onClick={setRating}
-                  initialValue={rating}
-                  size={32}
-                  fillColor="#3b82f6"
-                  SVGstyle={{ display: 'inline-block' }}
-                  style={{ display: 'flex', gap: '8px' }}
-                />
-              </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Rate this space
+            </label>
+            <div className="flex items-center">
+              <Rating
+                onClick={setRating}
+                initialValue={rating}
+                size={32}
+                fillColor="#3b82f6"
+                SVGstyle={{ display: 'inline-block' }}
+                style={{ display: 'flex', gap: '8px' }}
+              />
             </div>
           </div>
         </Card>
