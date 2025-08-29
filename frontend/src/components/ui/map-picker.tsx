@@ -114,28 +114,10 @@ function ExistingSpaces({ spaces, onSpaceClick }: { spaces: PublicSpace[], onSpa
 }
 
 export function MapPicker({ onLocationSelect, defaultCenter, existingSpaces = [], onSpaceClick, selectedLocation }: MapPickerProps) {
-  const [instructions, setInstructions] = useState(true);
   const center = selectedLocation || defaultCenter || { lat: 6.079565868771222, lng: 80.19253173040384 };
 
   return (
     <div className="relative w-full h-[400px] rounded-lg overflow-hidden border border-gray-200">
-      {instructions && (
-        <div className="absolute top-4 left-4 right-4 z-[1000] bg-black/75 text-white p-4 rounded-lg shadow-lg">
-          <div className="flex justify-between items-center">
-            <p className="text-sm">
-              👆 Click anywhere on the map to select a location. 
-              You can zoom in/out using the + and - buttons or mouse wheel.
-              Pan the map by dragging.
-            </p>
-            <button 
-              onClick={() => setInstructions(false)}
-              className="ml-4 text-white hover:text-gray-300"
-            >
-              ✕
-            </button>
-          </div>
-        </div>
-      )}
       <MapContainer
         center={center}
         zoom={16}
@@ -148,9 +130,6 @@ export function MapPicker({ onLocationSelect, defaultCenter, existingSpaces = []
         />
         <LocationMarker onLocationSelect={onLocationSelect} selectedLocation={selectedLocation} />
         <ExistingSpaces spaces={existingSpaces} onSpaceClick={onSpaceClick} />
-        <div className="absolute bottom-4 right-4 z-[1000] bg-white p-2 rounded-lg shadow-md text-xs">
-          Click to place a marker
-        </div>
       </MapContainer>
     </div>
   );
