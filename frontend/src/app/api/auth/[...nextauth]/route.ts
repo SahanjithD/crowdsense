@@ -58,7 +58,7 @@ export const authOptions: AuthOptions = {
         session.user.id = token.id as string;
         session.user.isAdmin = token.isAdmin as boolean;
         session.user.role = token.role as string;
-        (session as any).token = token.accessToken; // Include JWT token in session
+        (session.user as any).accessToken = token.accessToken; // Include JWT token in user object
       }
       return session;
     }

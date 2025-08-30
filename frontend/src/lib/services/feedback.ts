@@ -33,7 +33,7 @@ export class FeedbackService {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${(session as any).token}` // Add JWT token
+          'Authorization': `Bearer ${(session?.user as any)?.accessToken}` // Add JWT token
         },
         credentials: 'include',
         body: JSON.stringify(feedback)
@@ -110,10 +110,30 @@ export class FeedbackService {
 
   async getAllFeedback(): Promise<any[]> {
     try {
+      const session = await getSession();
+      if (!session) {
+        throw new Error('Authentication required');
+      }
+
+      console.log('Session:', session); // Debug log
+      const token = (session?.user as any)?.accessToken;
+      console.log('Token:', token); // Debug log
+
       const response = await fetch(`${this.baseUrl}/admin/all`, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
         credentials: 'include'
       });
+      
       if (!response.ok) {
+        const errorData = await response.json().catch(() => null);
+        console.error('Response error:', {
+          status: response.status,
+          statusText: response.statusText,
+          data: errorData
+        });
         throw new Error('Failed to fetch all feedback');
       }
       return await response.json();
@@ -125,7 +145,15 @@ export class FeedbackService {
 
   async getAdminStats(): Promise<any> {
     try {
+      const session = await getSession();
+      if (!session) {
+        throw new Error('Authentication required');
+      }
+
       const response = await fetch(`${this.baseUrl}/admin/stats`, {
+        headers: {
+          'Authorization': `Bearer ${(session?.user as any)?.accessToken}`
+        },
         credentials: 'include'
       });
       if (!response.ok) {
