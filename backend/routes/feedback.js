@@ -187,4 +187,48 @@ router.get('/spaces', async (req, res) => {
   }
 });
 
+// Admin Routes
+const isAdmin = (req, res, next) => {
+  if (!req.user?.isAdmin) {
+    return res.status(403).json({ message: 'Admin access required' });
+  }
+  next();
+};
+
+// Get all feedback for admin
+router.get('/admin/all', authenticateToken, isAdmin, async (req, res) => {
+  try {
+    const result = await db.query(
+      `SELECT f.*, ps.name as space_name, u.username 
+       FROM feedback f
+       LEFT JOIN public_spaces ps ON f.space_id = ps.space_id
+       LEFT JOIN users u ON f.user_id = u.user_id
+       ORDER BY created_at DESC
+       LIMIT 100`
+    );
+    
+    res.json(result.rows);
+  } catch (error) {
+    console.error('Error fetching all feedback:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+// Get admin dashboard stats
+router.get('/admin/stats', authenticateToken, isAdmin, async (req, res) => {
+  try {
+    const stats = await db.query(`
+      SELECT
+        (SELECT COUNT(*) FROM public_spaces) as total_spaces,
+        (SELECT COUNT(*) FROM feedback) as total_feedback,
+        (SELECT COUNT(*) FROM users) as total_users
+    `);
+    
+    res.json(stats.rows[0]);
+  } catch (error) {
+    console.error('Error fetching admin stats:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
 module.exports = router;

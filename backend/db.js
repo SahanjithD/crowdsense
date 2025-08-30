@@ -1,10 +1,13 @@
 const { Pool } = require("pg");
 
+// Log the database URL (with password redacted)
+const dbUrl = process.env.DATABASE_URL.replace(/:[^:@]*@/, ':****@');
+console.log('Connecting to database:', dbUrl);
+
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
   ssl: {
-    rejectUnauthorized: false,
-    sslmode: 'require'
+    rejectUnauthorized: false
   },
   max: 20,
   idleTimeoutMillis: 30000,
