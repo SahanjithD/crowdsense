@@ -3,23 +3,18 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { MapPin, Menu, X, User, LogOut } from "lucide-react";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useSession, signOut } from "next-auth/react";
 
 export default function Header() {
   const router = useRouter();
+  const { data: session } = useSession();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
 
-  useEffect(() => {
-    const token = localStorage.getItem('authToken');
-    setIsAuthenticated(!!token);
-  }, []);
-
-  const handleSignOut = () => {
-    localStorage.removeItem('authToken');
-    setIsAuthenticated(false);
+  const handleSignOut = async () => {
+    await signOut({ redirect: false });
     router.push('/');
   };
 
@@ -62,7 +57,7 @@ export default function Header() {
 
           {/* Desktop CTA Buttons or User Menu */}
           <div className="hidden md:flex items-center space-x-3">
-            {isAuthenticated ? (
+            {session ? (
               <div className="relative">
                 <Button
                   variant="ghost"
@@ -147,7 +142,7 @@ export default function Header() {
                 About
               </Link>
               <div className="flex flex-col space-y-3 pt-4 border-t border-gray-200">
-                {isAuthenticated ? (
+                {session ? (
                   <>
                     <Link
                       href="/dashboard"
