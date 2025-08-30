@@ -120,3 +120,28 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* Custom marker colors for different space types */
+.marker-toilet img {
+  filter: hue-rotate(180deg);
+}
+
+.marker-park img {
+  filter: hue-rotate(90deg);
+}
+
+.marker-station img {
+  filter: hue-rotate(270deg);
+}
+
+.marker-bus_stop img {
+  filter: hue-rotate(30deg);
+}
+
+.marker-mall img {
+  filter: hue-rotate(300deg);
+}
+
+.marker-other img {
+  filter: grayscale(100%);
+}

@@ -2,6 +2,7 @@
 
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { useSession } from 'next-auth/react';
 
 export default function DashboardLayout({
   children,
@@ -9,14 +10,14 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   const router = useRouter();
+  const { data: session, status } = useSession();
 
   useEffect(() => {
-    // Check if user is authenticated
-    const token = localStorage.getItem('authToken');
-    if (!token) {
-      router.push('/signin');
+    // Only redirect if explicitly unauthenticated
+    if (status === 'unauthenticated') {
+      router.replace('/signin');
     }
-  }, [router]);
+  }, [status, router]);
 
   return (
     <div className="min-h-screen bg-gray-50">

@@ -28,33 +28,23 @@ export default function Footer() {
             </div>
           </div>
 
-          {/* Product Links */}
+          {/* Quick Links */}
           <div>
-            <h3 className="text-lg font-semibold mb-4">Product</h3>
+            <h3 className="text-lg font-semibold mb-4">Quick Links</h3>
             <ul className="space-y-3">
               <li>
-                <Link href="/features" className="text-gray-400 hover:text-white transition-colors duration-200">
-                  Features
-                </Link>
-              </li>
-              <li>
                 <Link href="/feedback" className="text-gray-400 hover:text-white transition-colors duration-200">
-                  Report Issues
+                  Report Issue
                 </Link>
               </li>
               <li>
-                <Link href="/explore" className="text-gray-400 hover:text-white transition-colors duration-200">
-                  Explore Map
+                <Link href="/dashboard" className="text-gray-400 hover:text-white transition-colors duration-200">
+                  Dashboard
                 </Link>
               </li>
               <li>
-                <Link href="/analytics" className="text-gray-400 hover:text-white transition-colors duration-200">
-                  Analytics
-                </Link>
-              </li>
-              <li>
-                <Link href="/mobile" className="text-gray-400 hover:text-white transition-colors duration-200">
-                  Mobile App
+                <Link href="/about" className="text-gray-400 hover:text-white transition-colors duration-200">
+                  About Us
                 </Link>
               </li>
             </ul>
@@ -62,50 +52,8 @@ export default function Footer() {
 
           {/* Company Links */}
           <div>
-            <h3 className="text-lg font-semibold mb-4">Company</h3>
+            <h3 className="text-lg font-semibold mb-4">Legal</h3>
             <ul className="space-y-3">
-              <li>
-                <Link href="/about" className="text-gray-400 hover:text-white transition-colors duration-200">
-                  About Us
-                </Link>
-              </li>
-              <li>
-                <Link href="/careers" className="text-gray-400 hover:text-white transition-colors duration-200">
-                  Careers
-                </Link>
-              </li>
-              <li>
-                <Link href="/blog" className="text-gray-400 hover:text-white transition-colors duration-200">
-                  Blog
-                </Link>
-              </li>
-              <li>
-                <Link href="/press" className="text-gray-400 hover:text-white transition-colors duration-200">
-                  Press Kit
-                </Link>
-              </li>
-              <li>
-                <Link href="/partners" className="text-gray-400 hover:text-white transition-colors duration-200">
-                  Partners
-                </Link>
-              </li>
-            </ul>
-          </div>
-
-          {/* Support & Legal */}
-          <div>
-            <h3 className="text-lg font-semibold mb-4">Support</h3>
-            <ul className="space-y-3 mb-6">
-              <li>
-                <Link href="/help" className="text-gray-400 hover:text-white transition-colors duration-200">
-                  Help Center
-                </Link>
-              </li>
-              <li>
-                <Link href="/contact" className="text-gray-400 hover:text-white transition-colors duration-200">
-                  Contact Us
-                </Link>
-              </li>
               <li>
                 <Link href="/privacy" className="text-gray-400 hover:text-white transition-colors duration-200">
                   Privacy Policy
@@ -117,7 +65,11 @@ export default function Footer() {
                 </Link>
               </li>
             </ul>
-            
+          </div>
+
+          {/* Contact */}
+          <div>
+            <h3 className="text-lg font-semibold mb-4">Contact</h3>
             <div className="space-y-2">
               <div className="flex items-center text-sm text-gray-400">
                 <Mail className="h-4 w-4 mr-2" />
@@ -138,14 +90,11 @@ export default function Footer() {
               © 2024 CrowdSense. All rights reserved.
             </div>
             <div className="flex flex-wrap justify-center md:justify-end gap-6 text-sm">
-              <Link href="/accessibility" className="text-gray-400 hover:text-white transition-colors duration-200">
-                Accessibility
+              <Link href="/privacy" className="text-gray-400 hover:text-white transition-colors duration-200">
+                Privacy
               </Link>
-              <Link href="/cookies" className="text-gray-400 hover:text-white transition-colors duration-200">
-                Cookie Policy
-              </Link>
-              <Link href="/sitemap" className="text-gray-400 hover:text-white transition-colors duration-200">
-                Sitemap
+              <Link href="/terms" className="text-gray-400 hover:text-white transition-colors duration-200">
+                Terms
               </Link>
             </div>
           </div>

@@ -1,23 +1,39 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Rating } from 'react-simple-star-rating';
 import { CombinedLocationInput } from '@/components/ui/combined-location-input';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
 import { Textarea } from '@/components/ui/textarea';
+import { feedbackService } from '@/lib/services/feedback';
 
 
-const QUICK_ISSUES = [
-  { id: 'cleanliness', label: 'Cleanliness Issue' },
-  { id: 'crowding', label: 'Overcrowding' },
-  { id: 'safety', label: 'Safety Concern' },
-  { id: 'maintenance', label: 'Needs Maintenance' },
-  { id: 'accessibility', label: 'Accessibility Issue' }
-];
+interface FeedbackCategory {
+  category_id: string;
+  name: string;
+  description: string;
+  icon_url?: string;
+}
 
 export default function FeedbackPage() {
+  const [categories, setCategories] = useState<FeedbackCategory[]>([]);
+  const [error, setError] = useState<string>('');
+
+  useEffect(() => {
+    const loadCategories = async () => {
+      try {
+        const categories = await feedbackService.getFeedbackCategories();
+        setCategories(categories);
+      } catch (err) {
+        console.error('Error loading feedback categories:', err);
+        setError('Failed to load feedback categories. Some features may be limited.');
+      }
+    };
+
+    loadCategories();
+  }, []);
   const [location, setLocation] = useState<{
     coordinates?: { lat: number; lng: number };
     city?: string;
@@ -40,41 +56,52 @@ export default function FeedbackPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!location || !location.spaceType) {
+    if (!location?.coordinates || !location.spaceType) {
       alert('Please select a location and space type');
+      return;
+    }
+
+    if (!rating) {
+      alert('Please provide a rating');
       return;
     }
 
     setIsSubmitting(true);
     try {
-      // TODO: Implement API call
-      const response = await fetch('/api/feedback', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+      await feedbackService.submitFeedback({
+        location: {
+          coordinates: location.coordinates,
+          spaceType: location.spaceType,
+          name: location.name,
+          address: location.city,
+          description: location.landmark,
         },
-        body: JSON.stringify({
-          location,
-          rating,
-          issues: selectedIssues,
-          comments
-        })
+        rating,
+        issues: selectedIssues,
+        comments
       });
+      
+      // Show success message
+      const toast = document.createElement('div');
+      toast.className = 'fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded shadow-lg z-50';
+      toast.textContent = 'Feedback submitted successfully!';
+      document.body.appendChild(toast);
+      setTimeout(() => toast.remove(), 3000);
 
-      if (!response.ok) {
-        throw new Error('Failed to submit feedback');
-      }
-
-      alert('Feedback submitted successfully!');
       // Reset form
       setLocation({});
       setRating(0);
       setSelectedIssues([]);
       setComments('');
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error submitting feedback:', error);
-      alert('Failed to submit feedback. Please try again.');
+      
+      // Show error message
+      const toast = document.createElement('div');
+      toast.className = 'fixed top-4 right-4 bg-red-500 text-white px-6 py-3 rounded shadow-lg z-50';
+      toast.textContent = error.message || 'Failed to submit feedback. Please try again.';
+      document.body.appendChild(toast);
+      setTimeout(() => toast.remove(), 5000);
     } finally {
       setIsSubmitting(false);
     }
@@ -113,15 +140,18 @@ export default function FeedbackPage() {
         <Card className="p-6">
           <h2 className="text-xl font-semibold mb-4 text-gray-700">Issues</h2>
           <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-            {QUICK_ISSUES.map(issue => (
+            {error && (
+            <p className="text-red-500 mb-4">{error}</p>
+          )}
+          {categories.map(category => (
               <Button
-                key={issue.id}
+                key={category.category_id}
                 type="button"
-                variant={selectedIssues.includes(issue.id) ? "default" : "outline"}
-                onClick={() => handleIssueToggle(issue.id)}
+                variant={selectedIssues.includes(category.name) ? "default" : "outline"}
+                onClick={() => handleIssueToggle(category.name)}
                 className="w-full"
               >
-                {issue.label}
+                {category.name}
               </Button>
             ))}
           </div>

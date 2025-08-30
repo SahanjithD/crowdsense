@@ -3,11 +3,13 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { signIn } from "next-auth/react";
+import { getSession } from "next-auth/react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { MapPin, Eye, EyeOff, Mail, Lock, ArrowLeft } from "lucide-react";
-import { getApiUrl, API_CONFIG } from "@/lib/config";
+import { API_CONFIG } from "@/lib/config";
 
 // Google Icon Component
 const GoogleIcon = () => (
@@ -98,33 +100,22 @@ export default function SignIn() {
     setErrors({}); // Clear previous errors
     
     try {
-      const response = await fetch(getApiUrl(API_CONFIG.ENDPOINTS.AUTH.SIGNIN), {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          email: formData.email,
-          password: formData.password
-        }),
+      const response = await signIn('credentials', {
+        email: formData.email,
+        password: formData.password,
+        redirect: false
       });
 
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.message || 'Failed to sign in');
+      if (response?.error) {
+        throw new Error(response.error);
       }
 
-      if (data.success) {
-        // Store the JWT token in localStorage
-        if (data.token) {
-          localStorage.setItem('authToken', data.token);
-        }
-        
-        // Redirect to home page
-        router.push('/');
+      // Check session to determine role and redirect accordingly
+      const session = await getSession();
+      if (session?.user?.role === 'admin') {
+        router.push('/admin');
       } else {
-        throw new Error(data.message || 'Sign in failed');
+        router.push('/dashboard');
       }
       
     } catch (error) {
