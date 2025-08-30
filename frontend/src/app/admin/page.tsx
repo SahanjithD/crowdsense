@@ -25,14 +25,17 @@ export default function AdminDashboard() {
   useEffect(() => {
     const loadDashboardStats = async () => {
       try {
-        // Load spaces
-        const spaces = await feedbackService.getSpaces();
-        const feedback = await feedbackService.getAllFeedback();
-        
+        // Load spaces and feedback
+        const [spaces, feedback, statsResponse] = await Promise.all([
+          feedbackService.getSpaces(),
+          feedbackService.getAllFeedback(),
+          feedbackService.getAdminStats()
+        ]);
+
         setStats({
-          totalSpaces: spaces.length,
-          totalFeedback: feedback.length,
-          totalUsers: 0, // TODO: Implement user count
+          totalSpaces: Number(statsResponse.total_spaces),
+          totalFeedback: Number(statsResponse.total_feedback),
+          totalUsers: Number(statsResponse.total_users),
           recentSpaces: spaces.slice(-5), // Get last 5 spaces
           recentFeedback: feedback.slice(-5) // Get last 5 feedback
         });
