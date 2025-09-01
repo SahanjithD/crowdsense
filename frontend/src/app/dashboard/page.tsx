@@ -5,6 +5,7 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { useRouter } from 'next/navigation';
 import { MapPin, MessageSquare, Star, Activity } from 'lucide-react';
+import { feedbackService } from '@/lib/services/feedback';
 
 interface DashboardStats {
   totalFeedback: number;
@@ -34,35 +35,42 @@ export default function DashboardPage() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // TODO: Fetch actual data from API
-    // Simulated data for now
-    setTimeout(() => {
-      setStats({
-        totalFeedback: 12,
-        pendingFeedback: 3,
-        resolvedFeedback: 9,
-        averageRating: 4.2,
-      });
-      setRecentFeedback([
-        {
-          id: '1',
-          location: 'Central Park, Colombo',
-          type: 'Park',
-          status: 'Pending',
-          createdAt: '2025-08-20',
-          rating: 4,
-        },
-        {
-          id: '2',
-          location: 'Fort Railway Station',
-          type: 'Station',
-          status: 'Resolved',
-          createdAt: '2025-08-19',
-          rating: 3,
-        },
-      ]);
-      setIsLoading(false);
-    }, 1000);
+    const fetchData = async () => {
+      setIsLoading(true);
+      try {
+        const [statsResponse, feedbackResponse] = await Promise.all([
+          feedbackService.getUserStats(),
+          feedbackService.getUserRecentFeedback(5),
+        ]);
+        setStats({
+          totalFeedback: Number(statsResponse.total_feedback),
+          pendingFeedback: Number(statsResponse.pending_feedback),
+          resolvedFeedback: Number(statsResponse.resolved_feedback),
+          averageRating: Number(Number(statsResponse.average_rating).toFixed(1)),
+        });
+        setRecentFeedback(feedbackResponse.map((item: any) => ({
+          id: item.feedback_id,
+          location: item.location || 'Unknown Location',
+          type: item.type || 'Unknown Type',
+          status: item.status || 'Pending',
+          createdAt: new Date(item.created_at).toLocaleDateString(),
+          rating: item.rating || 0,
+        })));
+      } catch (error) {
+        console.error("Error fetching dashboard data:", error);
+        // Set default values on error
+        setStats({
+          totalFeedback: 0,
+          pendingFeedback: 0,
+          resolvedFeedback: 0,
+          averageRating: 0,
+        });
+        setRecentFeedback([]);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchData();
   }, []);
 
   return (
@@ -133,7 +141,7 @@ export default function DashboardPage() {
             <div className="ml-5 w-0 flex-1">
               <dl>
                 <dt className="text-sm font-medium text-gray-500 truncate">Average Rating</dt>
-                <dd className="text-2xl font-semibold text-gray-900">{stats.averageRating}</dd>
+                <dd className="text-2xl font-semibold text-gray-900">{stats.averageRating} ⭐</dd>
               </dl>
             </div>
           </div>
@@ -163,7 +171,9 @@ export default function DashboardPage() {
                       <span
                         className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
                           ${
-                            feedback.status === 'Pending'
+                            feedback.status === 'problematic'
+                              ? 'bg-red-100 text-red-800'
+                              : feedback.status === 'mixed'
                               ? 'bg-yellow-100 text-yellow-800'
                               : 'bg-green-100 text-green-800'
                           }`}
@@ -185,7 +195,7 @@ export default function DashboardPage() {
           <div className="mt-4 text-right">
             <Button
               variant="outline"
-              onClick={() => router.push('/dashboard/feedback')}
+              onClick={() => router.push('/dashboard/my-feedback')}
             >
               View All Feedback
             </Button>

@@ -165,6 +165,75 @@ export class FeedbackService {
       throw error;
     }
   }
+
+  async getUserStats(): Promise<any> {
+    try {
+      const session = await getSession();
+      if (!session) {
+        throw new Error('Authentication required');
+      }
+
+      const response = await fetch(`${this.baseUrl}/user/stats`, {
+        headers: {
+          'Authorization': `Bearer ${(session?.user as any)?.accessToken}`
+        },
+        credentials: 'include'
+      });
+      if (!response.ok) {
+        throw new Error('Failed to fetch user stats');
+      }
+      return await response.json();
+    } catch (error) {
+      console.error('Error fetching user stats:', error);
+      throw error;
+    }
+  }
+
+  async getUserRecentFeedback(limit: number = 5): Promise<any[]> {
+    try {
+      const session = await getSession();
+      if (!session) {
+        throw new Error('Authentication required');
+      }
+
+      const response = await fetch(`${this.baseUrl}/user/recent?limit=${limit}`, {
+        headers: {
+          'Authorization': `Bearer ${(session?.user as any)?.accessToken}`
+        },
+        credentials: 'include'
+      });
+      if (!response.ok) {
+        throw new Error('Failed to fetch user recent feedback');
+      }
+      return await response.json();
+    } catch (error) {
+      console.error('Error fetching user recent feedback:', error);
+      throw error;
+    }
+  }
+
+  async getUserFeedback(): Promise<any[]> {
+    try {
+      const session = await getSession();
+      if (!session) {
+        throw new Error('Authentication required');
+      }
+
+      const response = await fetch(`${this.baseUrl}/user/all`, {
+        headers: {
+          'Authorization': `Bearer ${(session?.user as any)?.accessToken}`
+        },
+        credentials: 'include'
+      });
+      if (!response.ok) {
+        throw new Error('Failed to fetch user feedback');
+      }
+      return await response.json();
+    } catch (error) {
+      console.error('Error fetching user feedback:', error);
+      throw error;
+    }
+  }
 }
 
 export const feedbackService = new FeedbackService();

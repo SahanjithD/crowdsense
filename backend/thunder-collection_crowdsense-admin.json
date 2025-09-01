@@ -1,0 +1,125 @@
+{
+  "client": "Thunder Client",
+  "collectionName": "CrowdSense Admin",
+  "dateExported": "2025-08-30T10:00:00.000Z",
+  "version": "1.1",
+  "folders": [],
+  "requests": [
+    {
+      "name": "Admin Sign In",
+      "_id": "signin",
+      "method": "POST",
+      "url": "http://localhost:8080/api/auth/signin",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "type": "json",
+        "raw": "{\n  \"email\": \"admin@crowdsense.dev\",\n  \"password\": \"your_admin_password\"\n}"
+      }
+    },
+    {
+      "name": "Get All Users",
+      "_id": "get-all-users",
+      "method": "GET",
+      "url": "http://localhost:8080/api/admin/users",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{token}}"
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ]
+    },
+    {
+      "name": "Update User Role",
+      "_id": "update-user-role",
+      "method": "PUT",
+      "url": "http://localhost:8080/api/admin/users/:userId/role",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{token}}"
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "type": "json",
+        "raw": "{\n  \"role\": \"user\"\n}"
+      }
+    },
+    {
+      "name": "Update User Status",
+      "_id": "update-user-status",
+      "method": "PUT",
+      "url": "http://localhost:8080/api/admin/users/:userId/status",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{token}}"
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "type": "json",
+        "raw": "{\n  \"isActive\": true\n}"
+      }
+    },
+    {
+      "name": "Get All Feedback",
+      "_id": "get-all-feedback",
+      "method": "GET",
+      "url": "http://localhost:8080/api/feedback/admin/all",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{token}}"
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ]
+    },
+    {
+      "name": "Get Admin Stats",
+      "_id": "get-admin-stats",
+      "method": "GET",
+      "url": "http://localhost:8080/api/feedback/admin/stats",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{token}}"
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ]
+    },
+    {
+      "name": "Get All Spaces",
+      "_id": "get-all-spaces",
+      "method": "GET",
+      "url": "http://localhost:8080/api/feedback/spaces",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ]
+    }
+  ]
+}
