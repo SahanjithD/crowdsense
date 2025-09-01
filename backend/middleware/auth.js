@@ -28,7 +28,8 @@ const authenticateToken = async (req, res, next) => {
       id: user.user_id,
       email: user.email,
       firstName: user.first_name,
-      lastName: user.last_name
+      lastName: user.last_name,
+      isAdmin: user.role === 'admin'
     };
     
     next();

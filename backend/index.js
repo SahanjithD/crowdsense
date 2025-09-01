@@ -7,6 +7,7 @@ const morgan = require("morgan");
 // Import routes
 const authRoutes = require('./routes/auth');
 const feedbackRoutes = require('./routes/feedback');
+const adminRoutes = require('./routes/admin');
 const authenticateToken = require("./middleware/auth");
 
 const app = express();
@@ -16,7 +17,9 @@ app.use(helmet());
 app.use(morgan('combined'));
 app.use(cors({
   origin: process.env.FRONTEND_URL || 'http://localhost:3000',
-  credentials: true
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
 }));
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
@@ -25,6 +28,7 @@ app.use(express.urlencoded({ extended: true }));
 // Use routes
 app.use('/api/auth', authRoutes);
 app.use('/api/feedback', feedbackRoutes);
+app.use('/api/admin', adminRoutes);
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {

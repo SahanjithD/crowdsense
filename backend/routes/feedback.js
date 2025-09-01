@@ -189,6 +189,7 @@ router.get('/spaces', async (req, res) => {
 
 // Admin Routes
 const isAdmin = (req, res, next) => {
+  console.log('User in isAdmin middleware:', req.user); // Debug log
   if (!req.user?.isAdmin) {
     return res.status(403).json({ message: 'Admin access required' });
   }
@@ -197,6 +198,7 @@ const isAdmin = (req, res, next) => {
 
 // Get all feedback for admin
 router.get('/admin/all', authenticateToken, isAdmin, async (req, res) => {
+  console.log('Request headers:', req.headers); // Debug log
   try {
     const result = await db.query(
       `SELECT f.*, ps.name as space_name, u.username 
@@ -227,6 +229,83 @@ router.get('/admin/stats', authenticateToken, isAdmin, async (req, res) => {
     res.json(stats.rows[0]);
   } catch (error) {
     console.error('Error fetching admin stats:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+// Get user dashboard stats
+router.get('/user/stats', authenticateToken, async (req, res) => {
+  try {
+    const userId = req.user.id;
+    
+    const stats = await db.query(`
+      SELECT
+        (SELECT COUNT(*) FROM feedback WHERE user_id = $1) as total_feedback,
+        (SELECT COUNT(*) FROM feedback WHERE user_id = $1 AND status = 'problematic') as pending_feedback,
+        (SELECT COUNT(*) FROM feedback WHERE user_id = $1 AND status = 'good') as resolved_feedback,
+        (SELECT COALESCE(AVG(rating), 0) FROM feedback WHERE user_id = $1) as average_rating
+    `, [userId]);
+    
+    res.json(stats.rows[0]);
+  } catch (error) {
+    console.error('Error fetching user stats:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+// Get user's recent feedback
+router.get('/user/recent', authenticateToken, async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const { limit = 5 } = req.query;
+    
+    const result = await db.query(`
+      SELECT 
+        f.feedback_id,
+        ps.name as location,
+        ps.space_type as type,
+        f.status,
+        f.created_at,
+        f.rating
+      FROM feedback f
+      LEFT JOIN public_spaces ps ON f.space_id = ps.space_id
+      WHERE f.user_id = $1
+      ORDER BY f.created_at DESC
+      LIMIT $2
+    `, [userId, limit]);
+    
+    res.json(result.rows);
+  } catch (error) {
+    console.error('Error fetching user recent feedback:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+// Get all user feedback
+router.get('/user/all', authenticateToken, async (req, res) => {
+  try {
+    const userId = req.user.id;
+    
+    const result = await db.query(`
+      SELECT 
+        f.feedback_id,
+        ps.name as space_name,
+        ps.space_type,
+        fc.name as category_name,
+        f.status,
+        f.created_at,
+        f.rating,
+        f.comment
+      FROM feedback f
+      LEFT JOIN public_spaces ps ON f.space_id = ps.space_id
+      LEFT JOIN feedback_categories fc ON f.category_id = fc.category_id
+      WHERE f.user_id = $1
+      ORDER BY f.created_at DESC
+    `, [userId]);
+    
+    res.json(result.rows);
+  } catch (error) {
+    console.error('Error fetching user feedback:', error);
     res.status(500).json({ message: 'Server error' });
   }
 });

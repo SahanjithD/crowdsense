@@ -2,8 +2,11 @@
 
 import { Card } from "@/components/ui/card";
 import { MapPin, Users, MessageSquare, Lightbulb } from "lucide-react";
+import { useSession } from "next-auth/react";
 
 export default function AboutPage() {
+  const { data: session } = useSession();
+
   return (
     <div className="container mx-auto px-4 py-12 max-w-5xl">
       {/* Hero Section */}
@@ -114,12 +117,14 @@ export default function AboutPage() {
             making our shared spaces better for everyone.
           </p>
           <div className="flex justify-center space-x-4">
-            <a
-              href="/signup"
-              className="bg-white text-indigo-600 px-6 py-2 rounded-lg font-semibold hover:bg-gray-100 transition-colors duration-200"
-            >
-              Sign Up Now
-            </a>
+            {!session && (
+              <a
+                href="/signup"
+                className="bg-white text-indigo-600 px-6 py-2 rounded-lg font-semibold hover:bg-gray-100 transition-colors duration-200"
+              >
+                Sign Up Now
+              </a>
+            )}
             <a
               href="/feedback"
               className="border-2 border-white text-white px-6 py-2 rounded-lg font-semibold hover:bg-white/10 transition-colors duration-200"
