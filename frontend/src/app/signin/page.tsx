@@ -103,11 +103,25 @@ export default function SignIn() {
       const response = await signIn('credentials', {
         email: formData.email,
         password: formData.password,
-        redirect: false
+        redirect: false,
+        // Add callbackUrl to ensure we get the error response
+        callbackUrl: window.location.origin
       });
 
+      console.log('SignIn Response:', response); // Debug log
+
       if (response?.error) {
-        throw new Error(response.error);
+        // Parse the error message
+        const errorMessage = response.error;
+        
+        if (errorMessage.includes('deactivated')) {
+          setErrors({ submit: 'Your account has been deactivated. Please contact support.' });
+        } else if (errorMessage.includes('Invalid')) {
+          setErrors({ submit: 'Invalid email or password' });
+        } else {
+          setErrors({ submit: errorMessage });
+        }
+        return;
       }
 
       // Check session to determine role and redirect accordingly

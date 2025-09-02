@@ -12,34 +12,35 @@ export const authOptions: AuthOptions = {
         password: { label: "Password", type: "password" }
       },
       async authorize(credentials, req) {
-        try {
-          const res = await fetch(`${API_CONFIG.BASE_URL}/api/auth/signin`, {
-            method: 'POST',
-            body: JSON.stringify({
-              email: credentials?.email,
-              password: credentials?.password
-            }),
-            headers: { "Content-Type": "application/json" }
-          });
-          const data = await res.json();
-
-          if (res.ok && data.success) {
-            return {
-              id: data.user.id,
-              email: data.user.email,
-              name: `${data.user.firstName} ${data.user.lastName}`,
-              role: data.user.role,
-              isAdmin: data.user.role === 'admin',
-              token: data.token, // Store the JWT token
-              // Debug log
-              _debug: { originalData: data.user }
-            };
-          }
-          return null;
-        } catch (error) {
-          console.error('Auth error:', error);
-          return null;
+        if (!credentials?.email || !credentials?.password) {
+          throw new Error("Email and password are required");
         }
+
+        const res = await fetch(`${API_CONFIG.BASE_URL}/api/auth/signin`, {
+          method: 'POST',
+          body: JSON.stringify({
+            email: credentials.email,
+            password: credentials.password
+          }),
+          headers: { "Content-Type": "application/json" }
+        });
+        
+        const data = await res.json();
+
+        if (res.ok && data.success) {
+          return {
+            id: data.user.id,
+            email: data.user.email,
+            name: `${data.user.firstName} ${data.user.lastName}`,
+            role: data.user.role,
+            isAdmin: data.user.role === 'admin',
+            token: data.token,
+            _debug: { originalData: data.user }
+          };
+        }
+
+        // Always throw the error message from the backend
+        throw new Error(data.message || "Authentication failed");
       }
     })
   ],
