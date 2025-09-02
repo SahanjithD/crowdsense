@@ -1,9 +1,9 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { MapPin, Search, Users, Star, TrendingUp } from "lucide-react";
+import { MapPin, Users, Star, TrendingUp } from "lucide-react";
+import { LocationSearch } from "@/components/ui/public-space-search";
 import Link from "next/link";
 import Header from "@/components/layout/Header";
 
@@ -34,13 +34,7 @@ export default function Hero() {
 
           {/* Search Bar */}
           <div className="max-w-md mx-auto mb-8">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
-              <Input 
-                placeholder="Search nearby public spaces..."
-                className="pl-11 pr-4 py-3 text-lg border-2 border-gray-200 focus:border-blue-500 rounded-lg"
-              />
-            </div>
+            <LocationSearch />
           </div>
 
           {/* CTA Buttons */}
