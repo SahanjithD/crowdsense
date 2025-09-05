@@ -25,10 +25,10 @@ export default function AdminDashboard() {
   useEffect(() => {
     const loadDashboardStats = async () => {
       try {
-        // Load spaces and feedback
+        // Load spaces and feedback with limits
         const [spaces, feedback, statsResponse] = await Promise.all([
-          feedbackService.getSpaces(),
-          feedbackService.getAllFeedback(),
+          feedbackService.getSpaces(5), // Only get 5 most recent spaces
+          feedbackService.getAllFeedback(5), // Only get 5 most recent feedback
           feedbackService.getAdminStats()
         ]);
 
@@ -87,11 +87,16 @@ export default function AdminDashboard() {
               <div key={space.space_id} className="flex items-center justify-between border-b pb-2 last:border-0">
                 <div>
                   <p className="font-medium text-gray-900">{space.name}</p>
-                  <p className="text-sm text-gray-500">{space.city}</p>
+                  <p className="text-sm text-gray-500">
+                    Last updated: {new Date(space.updated_at).toLocaleDateString()}
+                  </p>
                 </div>
-                <span className="text-sm text-gray-600">
-                  {space.total_feedback_count || 0} reviews
-                </span>
+                <div className="text-right">
+                  <span className="text-sm text-gray-600">
+                    {space.total_feedback_count || 0} reviews
+                  </span>
+                  <p className="text-xs text-gray-400">{space.space_type}</p>
+                </div>
               </div>
             ))}
           </div>
@@ -104,11 +109,28 @@ export default function AdminDashboard() {
             {stats.recentFeedback.map((feedback, index) => (
               <div key={feedback.feedback_id} className="flex items-center justify-between border-b pb-2 last:border-0">
                 <div>
-                  <p className="font-medium text-gray-900">{feedback.space_name}</p>
-                  <p className="text-sm text-gray-500">{feedback.comment?.slice(0, 50)}...</p>
+                  <div className="flex items-center gap-2">
+                    <p className="font-medium text-gray-900">{feedback.space_name}</p>
+                    <span className="text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded">
+                      {feedback.space_type}
+                    </span>
+                  </div>
+                  <p className="text-sm text-gray-500">
+                    {feedback.comment ? (
+                      feedback.comment.length > 50 
+                        ? `${feedback.comment.slice(0, 50)}...` 
+                        : feedback.comment
+                    ) : 'No comment'}
+                  </p>
+                  <p className="text-xs text-gray-400 mt-1">
+                    {new Date(feedback.updated_at || feedback.created_at).toLocaleDateString()}
+                  </p>
                 </div>
-                <div className="text-sm text-gray-600">
-                  ⭐ {feedback.rating}
+                <div className="text-right">
+                  <div className="text-sm text-gray-600">
+                    ⭐ {feedback.rating}
+                  </div>
+                  <p className="text-xs text-gray-400">{feedback.username || 'Anonymous'}</p>
                 </div>
               </div>
             ))}
