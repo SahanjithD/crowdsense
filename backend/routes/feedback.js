@@ -214,7 +214,7 @@ router.get('/admin/all', authenticateToken, isAdmin, async (req, res) => {
         f.status,
         ps.name as space_name,
         ps.space_type,
-        u.username,
+        COALESCE(u.username, SPLIT_PART(u.email, '@', 1), 'Anonymous') as username,
         u.email
        FROM feedback f
        LEFT JOIN public_spaces ps ON f.space_id = ps.space_id

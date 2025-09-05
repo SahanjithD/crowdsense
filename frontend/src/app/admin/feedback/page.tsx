@@ -196,7 +196,9 @@ export default function AdminFeedback() {
                     </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm text-gray-900">{item.username}</div>
+                    <div className="text-sm text-gray-900">
+                      {item.username || 'Anonymous'}
+                    </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="flex items-center">
