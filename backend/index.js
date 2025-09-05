@@ -8,6 +8,7 @@ const morgan = require("morgan");
 const authRoutes = require('./routes/auth');
 const feedbackRoutes = require('./routes/feedback');
 const adminRoutes = require('./routes/admin');
+const userRoutes = require('./routes/users');
 const authenticateToken = require("./middleware/auth");
 
 const app = express();
@@ -29,6 +30,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use('/api/auth', authRoutes);
 app.use('/api/feedback', feedbackRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/users', userRoutes);
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {
@@ -36,15 +38,6 @@ app.get('/api/health', (req, res) => {
     success: true, 
     message: 'CrowdSense API is running',
     timestamp: new Date().toISOString()
-  });
-});
-
-// Protected route example
-app.get('/api/profile', authenticateToken, (req, res) => {
-  res.json({
-    success: true,
-    message: 'Profile data',
-    user: req.user
   });
 });
 

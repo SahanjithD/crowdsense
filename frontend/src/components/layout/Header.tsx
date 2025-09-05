@@ -42,7 +42,7 @@ export default function Header() {
               Explore Map
             </Link>
             <Link 
-              href="/feedback" 
+              href={session ? "/feedback" : "/signin?returnUrl=/feedback"}
               className="text-gray-600 hover:text-blue-600 transition-colors font-medium"
             >
               Report Issue
@@ -128,11 +128,11 @@ export default function Header() {
                 Explore Map
               </Link>
               <Link 
-                href="/feedback" 
+                href={session ? "/feedback" : "/signin?returnUrl=/feedback"}
                 className="text-gray-600 hover:text-blue-600 transition-colors font-medium py-2"
                 onClick={() => setIsMenuOpen(false)}
               >
-                Report Issue
+                Report Issue {!session && <span className="text-xs ml-1">(Sign in required)</span>}
               </Link>
               <Link 
                 href="/about" 

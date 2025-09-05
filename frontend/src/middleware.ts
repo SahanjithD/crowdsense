@@ -16,11 +16,16 @@ export async function middleware(request: NextRequest) {
   });
 
   // Check if the request is for protected routes
-  if (request.nextUrl.pathname.startsWith('/admin') || request.nextUrl.pathname.startsWith('/dashboard')) {
-    // Not logged in - redirect to login
+  if (
+    request.nextUrl.pathname.startsWith('/admin') || 
+    request.nextUrl.pathname.startsWith('/dashboard') ||
+    request.nextUrl.pathname.startsWith('/feedback')
+  ) {
+    // Not logged in - redirect to login with return URL
     if (!token) {
+      const returnUrl = encodeURIComponent(request.nextUrl.pathname);
       console.log('No token - redirecting to signin');
-      return NextResponse.redirect(new URL('/signin', request.url));
+      return NextResponse.redirect(new URL(`/signin?returnUrl=${returnUrl}`, request.url));
     }
 
     // For admin routes, check admin role
@@ -39,6 +44,8 @@ export async function middleware(request: NextRequest) {
 export const config = {
   matcher: [
     '/admin/:path*',
-    '/dashboard/:path*'
+    '/dashboard/:path*',
+    '/feedback/:path*',
+    '/feedback'
   ]
 };

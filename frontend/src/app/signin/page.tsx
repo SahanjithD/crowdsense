@@ -100,22 +100,47 @@ export default function SignIn() {
     setErrors({}); // Clear previous errors
     
     try {
+      // Get return URL from query parameters
+      const searchParams = new URLSearchParams(window.location.search);
+      const returnUrl = searchParams.get('returnUrl') || '/';
+      
       const response = await signIn('credentials', {
         email: formData.email,
         password: formData.password,
-        redirect: false
+        redirect: false,
+        callbackUrl: window.location.origin + returnUrl
       });
 
+      console.log('SignIn Response:', response); // Debug log
+
       if (response?.error) {
-        throw new Error(response.error);
+        // Parse the error message
+        const errorMessage = response.error;
+        
+        if (errorMessage.includes('deactivated')) {
+          setErrors({ submit: 'Your account has been deactivated. Please contact support.' });
+        } else if (errorMessage.includes('Invalid')) {
+          setErrors({ submit: 'Invalid email or password' });
+        } else {
+          setErrors({ submit: errorMessage });
+        }
+        return;
       }
 
-      // Check session to determine role and redirect accordingly
+      // Check session and redirect
       const session = await getSession();
-      if (session?.user?.role === 'admin') {
-        router.push('/admin');
-      } else {
-        router.push('/');
+      if (session) {
+        // Get return URL from query parameters
+        const searchParams = new URLSearchParams(window.location.search);
+        const returnUrl = searchParams.get('returnUrl');
+        
+        if (session.user?.role === 'admin') {
+          router.push('/admin');
+        } else if (returnUrl) {
+          router.push(decodeURIComponent(returnUrl));
+        } else {
+          router.push('/');
+        }
       }
       
     } catch (error) {
