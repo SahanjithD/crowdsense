@@ -36,8 +36,8 @@ export default function CallToAction() {
             </Button>
             <Button 
               size="lg" 
-              variant="outline" 
-              className="w-full sm:w-auto px-8 py-4 text-lg border-white text-white hover:bg-white hover:text-blue-700"
+              variant="secondary" 
+              className="w-full sm:w-auto px-8 py-4 text-lg bg-white text-blue-700 hover:bg-gray-100"
               asChild
             >
               <Link href="/explore">

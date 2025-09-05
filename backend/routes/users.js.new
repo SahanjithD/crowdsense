@@ -1,0 +1,47 @@
+const express = require('express');
+const { authenticateToken } = require('../middleware/auth');
+const { pool } = require('../db');
+
+const router = express.Router();
+
+router.get('/profile', authenticateToken, (req, res) => {
+  const userId = req.user.userId;
+  const query = 'SELECT first_name, last_name, email FROM users WHERE user_id = $1';
+  
+  pool.query(query, [userId])
+    .then(result => {
+      if (result.rows.length === 0) {
+        return res.status(404).json({ error: 'User not found' });
+      }
+      res.json({ user: result.rows[0] });
+    })
+    .catch(error => {
+      console.error('Error getting user profile:', error);
+      res.status(500).json({ error: 'Internal server error' });
+    });
+});
+
+router.put('/profile', authenticateToken, (req, res) => {
+  const userId = req.user.userId;
+  const { firstName, lastName } = req.body;
+
+  if (!firstName || !lastName) {
+    return res.status(400).json({ error: 'First name and last name are required' });
+  }
+
+  const query = 'UPDATE users SET first_name = $1, last_name = $2 WHERE user_id = $3 RETURNING first_name, last_name, email';
+  
+  pool.query(query, [firstName, lastName, userId])
+    .then(result => {
+      if (result.rows.length === 0) {
+        return res.status(404).json({ error: 'User not found' });
+      }
+      res.json({ user: result.rows[0] });
+    })
+    .catch(error => {
+      console.error('Error updating user profile:', error);
+      res.status(500).json({ error: 'Internal server error' });
+    });
+});
+
+module.exports = router;

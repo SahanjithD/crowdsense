@@ -8,6 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
 import { Textarea } from '@/components/ui/textarea';
 import { feedbackService } from '@/lib/services/feedback';
+import { useRouter } from 'next/navigation';
 
 
 interface FeedbackCategory {
@@ -18,6 +19,7 @@ interface FeedbackCategory {
 }
 
 export default function FeedbackPage() {
+  const router = useRouter();
   const [categories, setCategories] = useState<FeedbackCategory[]>([]);
   const [error, setError] = useState<string>('');
 
@@ -86,13 +88,12 @@ export default function FeedbackPage() {
       toast.className = 'fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded shadow-lg z-50';
       toast.textContent = 'Feedback submitted successfully!';
       document.body.appendChild(toast);
-      setTimeout(() => toast.remove(), 3000);
-
-      // Reset form
-      setLocation({});
-      setRating(0);
-      setSelectedIssues([]);
-      setComments('');
+      
+      // Navigate to home page after a brief delay to show the success message
+      setTimeout(() => {
+        toast.remove();
+        router.push('/');
+      }, 500);
     } catch (error: any) {
       console.error('Error submitting feedback:', error);
       

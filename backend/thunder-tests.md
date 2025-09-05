@@ -171,9 +171,70 @@
 5. Use `{{token}}` in your Authorization headers for admin endpoints
 6. Test each endpoint and verify the responses match the expected format
 
+## User Profile Endpoints
+
+### Get User Profile
+- **Method**: GET
+- **URL**: `http://localhost:8080/api/users/profile`
+- **Headers**:
+  ```
+  Authorization: Bearer {{token}}
+  Content-Type: application/json
+  ```
+- **Expected Response**:
+  ```json
+  {
+    "success": true,
+    "user": {
+      "email": "user@example.com",
+      "firstName": "John",
+      "lastName": "Doe"
+    }
+  }
+  ```
+
+### Update User Profile
+- **Method**: PUT
+- **URL**: `http://localhost:8080/api/users/profile`
+- **Headers**:
+  ```
+  Authorization: Bearer {{token}}
+  Content-Type: application/json
+  ```
+- **Body**:
+  ```json
+  {
+    "firstName": "John",
+    "lastName": "Doe"
+  }
+  ```
+- **Expected Response**:
+  ```json
+  {
+    "success": true,
+    "user": {
+      "email": "user@example.com",
+      "firstName": "John",
+      "lastName": "Doe"
+    }
+  }
+  ```
+- **Error Responses**:
+  ```json
+  {
+    "error": "First name and last name are required"
+  }
+  ```
+  ```json
+  {
+    "error": "User not found"
+  }
+  ```
+
 ## Common Issues
 - If you get a 401 error, your token might be expired. Get a new one by signing in again
 - If you get a 403 error, make sure you're using an admin account
 - Make sure to include the "Bearer " prefix before your token in the Authorization header
 - When updating user role, ensure the role is one of: "admin", "moderator", or "user"
 - When updating user status, isActive must be a boolean (true/false)
+- For profile updates, both firstName and lastName are required fields

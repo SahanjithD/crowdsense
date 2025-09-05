@@ -3,7 +3,15 @@
   "collectionName": "CrowdSense Admin",
   "dateExported": "2025-08-30T10:00:00.000Z",
   "version": "1.1",
-  "folders": [],
+  "folders": [
+    {
+      "name": "User Profile",
+      "_id": "user-profile",
+      "containerId": "",
+      "created": "2025-09-05T10:20:00.000Z",
+      "sortNum": 10000
+    }
+  ],
   "requests": [
     {
       "name": "Admin Sign In",
@@ -120,6 +128,44 @@
           "value": "application/json"
         }
       ]
+    },
+    {
+      "name": "Get User Profile",
+      "_id": "get-user-profile",
+      "method": "GET",
+      "url": "http://localhost:8080/api/users/profile",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{token}}"
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "folder": "user-profile"
+    },
+    {
+      "name": "Update User Profile",
+      "_id": "update-user-profile",
+      "method": "PUT",
+      "url": "http://localhost:8080/api/users/profile",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{token}}"
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "type": "json",
+        "raw": "{\n  \"firstName\": \"John\",\n  \"lastName\": \"Doe\"\n}"
+      },
+      "folder": "user-profile"
     }
   ]
 }
