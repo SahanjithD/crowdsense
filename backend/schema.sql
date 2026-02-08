@@ -75,16 +75,6 @@ CREATE TABLE IF NOT EXISTS feedback (
     is_verified BOOLEAN DEFAULT FALSE
 );
 
--- Create email verifications table
-CREATE TABLE IF NOT EXISTS email_verifications (
-    verification_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    user_id UUID REFERENCES users(user_id),
-    verification_token VARCHAR(128) UNIQUE,
-    expires_at TIMESTAMP WITH TIME ZONE,
-    is_used BOOLEAN DEFAULT FALSE,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
-);
-
 -- Create password resets table
 CREATE TABLE IF NOT EXISTS password_resets (
     reset_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -116,29 +106,7 @@ CREATE TABLE IF NOT EXISTS feedback_responses (
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
--- Create sessions table
-CREATE TABLE IF NOT EXISTS sessions (
-    session_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    user_id UUID REFERENCES users(user_id),
-    ip_address VARCHAR(64),
-    user_agent VARCHAR(256),
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-    expires_at TIMESTAMP WITH TIME ZONE
-);
-
--- Create audit logs table
-CREATE TABLE IF NOT EXISTS audit_logs (
-    log_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    table_name VARCHAR(64),
-    record_id UUID,
-    action VARCHAR(16) CHECK (action IN ('INSERT', 'UPDATE', 'DELETE')),
-    old_data JSONB,
-    new_data JSONB,
-    user_id UUID REFERENCES users(user_id),
-    ip_address VARCHAR(64),
-    user_agent VARCHAR(256),
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
-);
+-- Tables removed: sessions, audit_logs
 
 -- Create indexes for performance
 CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);
@@ -158,9 +126,7 @@ CREATE INDEX IF NOT EXISTS idx_feedback_created_at ON feedback(created_at DESC);
 CREATE INDEX IF NOT EXISTS idx_feedback_anonymous ON feedback(session_id) WHERE is_anonymous = TRUE;
 
 CREATE INDEX IF NOT EXISTS idx_feedback_votes_feedback ON feedback_votes(feedback_id);
-CREATE INDEX IF NOT EXISTS idx_email_verifications_token ON email_verifications(verification_token) WHERE is_used = FALSE;
 CREATE INDEX IF NOT EXISTS idx_password_resets_token ON password_resets(reset_token) WHERE is_used = FALSE;
-CREATE INDEX IF NOT EXISTS idx_sessions_expires ON sessions(expires_at);
 
 -- Add indexes for location columns
 CREATE INDEX IF NOT EXISTS idx_spaces_location ON public_spaces (latitude, longitude);
@@ -174,6 +140,11 @@ BEGIN
     RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
+
+DROP TRIGGER IF EXISTS tr_users_updated_at ON users;
+DROP TRIGGER IF EXISTS tr_public_spaces_updated_at ON public_spaces;
+DROP TRIGGER IF EXISTS tr_feedback_updated_at ON feedback;
+DROP TRIGGER IF EXISTS tr_feedback_responses_updated_at ON feedback_responses;
 
 CREATE TRIGGER tr_users_updated_at BEFORE UPDATE ON users FOR EACH ROW EXECUTE FUNCTION update_updated_at();
 CREATE TRIGGER tr_public_spaces_updated_at BEFORE UPDATE ON public_spaces FOR EACH ROW EXECUTE FUNCTION update_updated_at();

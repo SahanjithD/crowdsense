@@ -16,8 +16,15 @@ const app = express();
 // Middleware
 app.use(helmet());
 app.use(morgan('combined'));
+// CORS: support multiple dev origins via CORS_ORIGINS (comma-separated)
+const corsOriginsEnv = process.env.CORS_ORIGINS || process.env.FRONTEND_URL || 'http://localhost:3000';
+const allowedOrigins = corsOriginsEnv.split(',').map(o => o.trim()).filter(Boolean);
 app.use(cors({
-  origin: process.env.FRONTEND_URL || 'http://localhost:3000',
+  origin: function(origin, callback) {
+    if (!origin) return callback(null, true); // allow non-browser clients
+    if (allowedOrigins.includes(origin)) return callback(null, true);
+    return callback(new Error('Not allowed by CORS: ' + origin));
+  },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
