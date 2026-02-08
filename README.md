@@ -87,5 +87,5 @@ CrowdSense is a full‑stack web application for collecting, exploring, and mana
   - `npm run build` – Production build
   - `npm start` – Start production server
 
-## License
-This project currently has no explicit license. Add one if you plan to open‑source or distribute.
+
+
