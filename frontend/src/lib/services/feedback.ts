@@ -95,9 +95,12 @@ export class FeedbackService {
     }
   }
 
-  async getSpaces(): Promise<any[]> {
+  async getSpaces(limit?: number): Promise<any[]> {
     try {
-      const response = await fetch(`${this.baseUrl}/spaces`);
+      const url = limit 
+        ? `${this.baseUrl}/spaces?limit=${limit}`
+        : `${this.baseUrl}/spaces`;
+      const response = await fetch(url);
       if (!response.ok) {
         throw new Error('Failed to fetch spaces');
       }
@@ -108,18 +111,19 @@ export class FeedbackService {
     }
   }
 
-  async getAllFeedback(): Promise<any[]> {
+  async getAllFeedback(limit?: number): Promise<any[]> {
     try {
       const session = await getSession();
       if (!session) {
         throw new Error('Authentication required');
       }
 
-      console.log('Session:', session); // Debug log
       const token = (session?.user as any)?.accessToken;
-      console.log('Token:', token); // Debug log
+      const url = limit 
+        ? `${this.baseUrl}/admin/all?limit=${limit}`
+        : `${this.baseUrl}/admin/all`;
 
-      const response = await fetch(`${this.baseUrl}/admin/all`, {
+      const response = await fetch(url, {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'

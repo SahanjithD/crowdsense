@@ -171,13 +171,16 @@ router.get('/space-by-location', async (req, res) => {
 // Get all spaces
 router.get('/spaces', async (req, res) => {
   try {
+    const { limit = 100 } = req.query;
     const result = await db.query(
       `SELECT space_id, name, space_type, latitude, longitude, 
-              address, avg_rating, total_feedback_count, last_feedback_at
+              address, avg_rating, total_feedback_count, updated_at,
+              created_at, last_feedback_at
        FROM public_spaces 
        WHERE is_active = true
-       ORDER BY last_feedback_at DESC NULLS LAST
-       LIMIT 100`
+       ORDER BY updated_at DESC NULLS LAST, created_at DESC
+       LIMIT $1`,
+      [limit]
     );
     
     res.json(result.rows);
@@ -200,13 +203,25 @@ const isAdmin = (req, res, next) => {
 router.get('/admin/all', authenticateToken, isAdmin, async (req, res) => {
   console.log('Request headers:', req.headers); // Debug log
   try {
+    const { limit = 100 } = req.query;
     const result = await db.query(
-      `SELECT f.*, ps.name as space_name, u.username 
+      `SELECT 
+        f.feedback_id,
+        f.rating,
+        f.comment,
+        f.created_at,
+        f.updated_at,
+        f.status,
+        ps.name as space_name,
+        ps.space_type,
+        COALESCE(u.username, SPLIT_PART(u.email, '@', 1), 'Anonymous') as username,
+        u.email
        FROM feedback f
        LEFT JOIN public_spaces ps ON f.space_id = ps.space_id
        LEFT JOIN users u ON f.user_id = u.user_id
-       ORDER BY created_at DESC
-       LIMIT 100`
+       ORDER BY f.updated_at DESC NULLS LAST, f.created_at DESC
+       LIMIT $1`,
+      [limit]
     );
     
     res.json(result.rows);

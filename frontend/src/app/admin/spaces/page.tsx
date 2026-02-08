@@ -54,7 +54,6 @@ export default function AdminSpaces() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold text-gray-900">Manage Spaces</h1>
-        <Button>Add New Space</Button>
       </div>
 
       {/* Search and Filters */}
@@ -81,7 +80,6 @@ export default function AdminSpaces() {
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Address</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Rating</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Feedback</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
@@ -103,15 +101,6 @@ export default function AdminSpaces() {
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="text-sm text-gray-900">{space.total_feedback_count || 0}</div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                    <Button
-                      variant="ghost"
-                      className="text-indigo-600 hover:text-indigo-900"
-                      onClick={() => {/* TODO: Implement edit */}}
-                    >
-                      Edit
-                    </Button>
                   </td>
                 </tr>
               ))}
